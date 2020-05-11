@@ -37,14 +37,14 @@ public class Main extends Application {
 
         Coordinate pointOne = new Coordinate(100, 100);
         Coordinate pointTwo = new Coordinate(200, 200);
-        Coordinate pointThree = new Coordinate(300, 300);
+        Coordinate pointThree = new Coordinate(700, 700);
 
         Route newRoute = new Route(Arrays.asList(pointOne, pointTwo, pointThree));
 
         mapObj.add(new Street("Street", pointOne, pointThree));
-        mapObj.add(new Bus(pointOne, 10, newRoute));
+        mapObj.add(new Bus(pointOne, 5, newRoute));
 
         guiController.setElements(mapObj);
-        guiController.updateTimer();
+        guiController.updateTimer(1);
     }
 }

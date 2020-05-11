@@ -17,7 +17,7 @@ public class Route {
             result = two.getX() - one.getX();
         }
         else {
-            result = two.getY() - two.getY();
+            result = two.getY() - one.getY();
         }
         return result;
     }
@@ -39,18 +39,22 @@ public class Route {
         for (int i = 0; i < route.size() - 1; i++){
             one = route.get(i);
             two = route.get(i + 1);
-            totalRoute = totalRoute + calculateDistance(one, two);
 
-            if (totalRoute >= distance) {
+            if (totalRoute + calculateDistance(one, two) > distance) {
                 break;
             }
+            totalRoute += calculateDistance(one, two);
         }
-        totalRoute = (distance - totalRoute) / calculateDistance(one, two);
-        finalX = one.getX() + diff(one, two, 1) * totalRoute;       // get final X coordinate
-        finalY = one.getY() + diff(one, two, 0) * totalRoute;       // get final Y coordinate
+        double soFar = (distance - totalRoute) / calculateDistance(one, two);
+        finalX = one.getX() + diff(one, two, 1) * soFar;       // get final X coordinate
+        finalY = one.getY() + diff(one, two, 0) * soFar;       // get final Y coordinate
         finalPosition = new Coordinate(finalX, finalY);                  // get the final position
 
         System.out.println(finalPosition);
+
+        if (route.get(route.size() - 1).getX() < finalPosition.getX() || route.get(route.size() - 1).getY() < finalPosition.getY()){
+            return route.get(route.size() - 1);
+        }
         return finalPosition;
     }
 }

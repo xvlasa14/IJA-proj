@@ -35,8 +35,12 @@ public class Bus implements Draw, Update {
 
     private void movement(Coordinate c) {
         for( Shape shape : GUI) {
-            shape.setTranslateX((c.getX() - position.getX()) + shape.getTranslateX());
-            shape.setTranslateY((c.getY() - position.getY()) + shape.getTranslateY());
+            try {
+                shape.setTranslateX((c.getX() - position.getX()) + shape.getTranslateX());
+                shape.setTranslateY((c.getY() - position.getY()) + shape.getTranslateY());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

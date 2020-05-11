@@ -1,4 +1,4 @@
-package Project.Mechanics; /**
+/**
  * <h2>Design Project.Mechanics.Controller</h2>
  * Controls all events that happen during the
  * use of the GUI.
@@ -6,9 +6,11 @@ package Project.Mechanics; /**
  * @author Nela Vlasakova (xvlasa14)
  * @since 04 2020
  */
+package Project.Mechanics;
 
 import Project.MapObjects.Draw;
 import javafx.fxml.FXML;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 
@@ -21,10 +23,21 @@ import java.util.TimerTask;
 public class Controller {
     @FXML
     private Pane content;
+    @FXML
+    private ToggleButton speedUp;
+    @FXML
+    private ToggleButton pause;
+
     private List<Draw> elements = new ArrayList<>();
     private Timer timer;
     private LocalTime time = LocalTime.now();
     private List<Update> updates = new ArrayList<>();
+
+    long speed = 1;
+    int paused = 1;
+
+    public Controller() {
+    }
 
 
     /* - - - - - - - - - - - - - - - - - - ZOOM - - - - - - - - - - - - - - - - - - */
@@ -48,6 +61,29 @@ public class Controller {
         content.layout();
     }
 
+    @FXML
+    private void speedUp() {
+        timer.cancel();
+        if (speed == 6) {
+            speed = 1;
+        }
+        else {
+            speed = 6;
+        }
+        updateTimer(speed);
+    }
+
+    @FXML
+    private void pause() {
+        paused = paused + 1;
+        if(paused % 2 == 0) {
+            timer.cancel();
+        }
+        else {
+            updateTimer(speed);
+        }
+    }
+
     public void setElements(List<Draw> elements) {
         this.elements = elements;
         for (Draw draw : elements) {
@@ -58,7 +94,7 @@ public class Controller {
         }
     }
 
-    public void updateTimer(){
+    public void updateTimer(long speed){
         timer = new Timer(false);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -68,7 +104,7 @@ public class Controller {
                     update.update(time);
                 }
             }
-        }, 0, 500);
+        }, 0, 500 / speed);
 
     }
 
