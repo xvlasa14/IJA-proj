@@ -1,4 +1,4 @@
-package Project.Mechanics; /**
+/**
  * <h1>Project.Mechanics.Main class</h1>
  * This app shows a map with buses, streets
  * and stops. It simulates the movement of
@@ -8,7 +8,7 @@ package Project.Mechanics; /**
  * @version 1.0
  * @since 04 2020
 */
-
+package Project.Mechanics;
 import Project.MapObjects.Bus;
 import Project.MapObjects.Draw;
 import javafx.application.Application;
