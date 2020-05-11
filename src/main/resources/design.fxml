@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Project.Mechanics.Controller">
+   <bottom>
+      <AnchorPane prefHeight="150.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tady bude nějaký text, pravděpodobně." textAlignment="CENTER" wrappingWidth="200.0" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="500.0" AnchorPane.topAnchor="50.0" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </AnchorPane>
+   </bottom>
+   <center>
+      <ScrollPane pannable="true" prefHeight="462.0" prefWidth="958.0" BorderPane.alignment="CENTER">
+         <content>
+            <Group>
+               <children>
+                  <Pane fx:id="content" layoutX="210.0" layoutY="64.0" onScroll="#zoom" prefHeight="298.0" prefWidth="401.0" />
+               </children>
+            </Group>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
