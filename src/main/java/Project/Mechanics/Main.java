@@ -42,7 +42,7 @@ public class Main extends Application {
         Route newRoute = new Route(Arrays.asList(pointOne, pointTwo, pointThree));
 
         mapObj.add(new Street("Street", pointOne, pointThree));
-        mapObj.add(new Bus(pointOne, 2, newRoute));
+        mapObj.add(new Bus(pointOne, 10, newRoute));
 
         guiController.setElements(mapObj);
         guiController.updateTimer();

@@ -50,6 +50,7 @@ public class Bus implements Draw, Update {
         distance += speed;
         Coordinate c = route.calculateRoute(distance);
         movement(c);
+        position = c;
 
 
     }
