@@ -6,7 +6,7 @@
  * @author Nela Vlasakova (xvlasa14)
  * @since 04 2020
  */
-package Project.MapObjects;
+package Project.Mechanics;
 
 import javafx.scene.shape.Shape;
 

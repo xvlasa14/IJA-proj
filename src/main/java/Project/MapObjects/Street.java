@@ -1,6 +1,7 @@
-package Project.Mechanics;
+package Project.MapObjects;
 
-import Project.MapObjects.Draw;
+import Project.Mechanics.Coordinate;
+import Project.Mechanics.Draw;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;

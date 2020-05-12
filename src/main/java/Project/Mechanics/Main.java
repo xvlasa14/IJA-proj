@@ -10,7 +10,7 @@
 */
 package Project.Mechanics;
 import Project.MapObjects.Bus;
-import Project.MapObjects.Draw;
+import Project.MapObjects.Street;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

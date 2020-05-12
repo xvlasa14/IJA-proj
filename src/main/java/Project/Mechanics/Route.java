@@ -9,6 +9,14 @@ public class Route {
         this.route = route;
     }
 
+    public List<Coordinate> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<Coordinate> route) {
+        this.route = route;
+    }
+
     // difference of two coordinates, for x and y
     public double diff(Coordinate one, Coordinate two, int type) {
         // if type is X

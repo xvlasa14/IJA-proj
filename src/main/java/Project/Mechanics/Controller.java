@@ -8,7 +8,6 @@
  */
 package Project.Mechanics;
 
-import Project.MapObjects.Draw;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.ScrollEvent;
