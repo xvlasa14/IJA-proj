@@ -205,15 +205,15 @@ streets:
     x: 499.0
     y: 764.0
   end:
-    x: 720.0
-    y: 362.0
+    x: 723.0
+    y: 368.0
   traffic: 0.0
 - &Street12 sName: "street12"
   stops:
   - *Stop12
   begin:
-    x: 720.0
-    y: 362.0
+    x: 723.0
+    y: 368.0
   end:
     x: 763.0
     y: 99.0
@@ -255,17 +255,17 @@ streets:
     x: 732.0
     y: 711.0
   end:
-    x: 716.0
-    y: 364.0
+    x: 723.0
+    y: 368.0
   traffic: 0.0
 - &Street17 sName: "street17"
   stops:
   - *Stop17
   begin:
     x: 732.0
-    y: 710.0
+    y: 711.0
   end:
-    x: 497.0
+    x: 499.0
     y: 764.0
   traffic: 0.0
 - &Street18 sName: "street18"
@@ -282,7 +282,7 @@ streets:
   stops:
   - *Stop19
   begin:
-    x: 58.0
+    x: 57.0
     y: 675.0
   end:
     x: 155.0
@@ -305,6 +305,6 @@ streets:
     x: 33.0
     y: 218.0
   end:
-    x: 151.0
-    y: 496.0
+    x: 155.0
+    y: 491.0
   traffic: 0.0
