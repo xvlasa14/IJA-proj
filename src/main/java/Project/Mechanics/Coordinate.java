@@ -18,6 +18,9 @@ public class Coordinate {
         this.x = x;
         this.y = y;
     }
+    public Coordinate() {
+
+    }
 
     // get x coordinate
     public double getX() {
@@ -47,6 +50,24 @@ public class Coordinate {
         else {
             this.y = y;
         }
+    }
+
+    public double diff(Coordinate one, Coordinate two, int type) {
+        // if type is X
+        double result = 0;
+        if(type == 1) {
+            result = two.getX() - one.getX();
+        }
+        else {
+            result = two.getY() - one.getY();
+        }
+        return result;
+    }
+
+    double calculateDistance(Coordinate one, Coordinate two){
+        double t1 = Math.pow(diff(one, two, 1), 2);
+        double t2 = Math.pow(diff(one, two, 0), 2);
+        return Math.sqrt( t1 + t2);
     }
 
     // return string with coordinates

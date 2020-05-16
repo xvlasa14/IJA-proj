@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 /**
  * Represents a stop on a street
@@ -37,17 +37,19 @@ public class Stop implements Draw {
         this.coordinates = coordinates;
         setGUI();
     }
+    public Stop() {
+    }
 
     /**
      * Sets the GUI for a stop
      * @return GUI in the form of dot with text above it
      */
-    @Override
-    public List<Shape> setGUI() {
+    public void setGUI() {
+        GUI = new ArrayList<>();
         double xStop = coordinates.getX();
         double yStop = coordinates.getY();
-
-        return Arrays.asList(new Text(xStop, yStop, stopName), new Circle(xStop, yStop, 3, Color.LIGHTCORAL));
+        GUI.add(new Text(xStop, yStop, stopName));
+        GUI.add(new Circle(xStop, yStop, 3, Color.LIGHTCORAL));
     }
 
     /**
@@ -62,13 +64,45 @@ public class Stop implements Draw {
     public void setStreet(Map map) {
         List<Street> streets = map.getStreets();
         for (Street s : streets) {
-            for(Stop t : s.getStop()) {
+            for(Stop t : s.getStops()) {
                 if(t == this){
                     this.street = s;
                 }
             }
         }
+    }
 
+    public Street getStreet() {
+        return street;
+    }
+
+    public boolean isStopOnStreet(Street street) {
+        // TO DO Aleš
+        // jestli je bod (zastávka = stop) na přímce (ulice = street)
+        // mezi dvěma body
+        return true;
+    }
+
+    public String getStopName() {
+        return stopName;
+    }
+
+    public void setStopName(String stopName) {
+        this.stopName = stopName;
+    }
+
+    public Coordinate getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinate coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    @Override
+    public String toString() {
+        return "Stop " + stopName + ": \n" +
+               "  Coordinates:" + coordinates;
     }
 
     static class stopConstructor extends StdConverter<Stop, Stop> {

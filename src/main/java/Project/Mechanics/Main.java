@@ -9,7 +9,10 @@
  * @since 04 2020
 */
 package Project.Mechanics;
+
 import Project.MapObjects.Bus;
+import Project.MapObjects.Map;
+import Project.MapObjects.Stop;
 import Project.MapObjects.Street;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -19,8 +22,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main extends Application {
@@ -38,21 +41,28 @@ public class Main extends Application {
         Controller guiController = loadGUI.getController();
         List<Draw> mapObj = new ArrayList<>();
 
-        YAMLFactory map = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-        ObjectMapper mapper = new ObjectMapper(map);
+        // loading data from file
+        YAMLFactory base = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+        ObjectMapper mapper = new ObjectMapper(base);
+        Map map = mapper.readValue(new File("export.yml"), Map.class);
+        mapObj.addAll(map.getStreets());
+        mapObj.addAll(map.getStops());
 
-
-
-        Coordinate pointOne = new Coordinate(100, 100);
-        Coordinate pointTwo = new Coordinate(200, 200);
-        Coordinate pointThree = new Coordinate(700, 700);
-
-        Route newRoute = new Route(Arrays.asList(pointOne, pointTwo, pointThree));
-
-        mapObj.add(new Street("Street", pointOne, pointThree));
-        mapObj.add(new Bus(pointOne, 5, newRoute));
-
+        // assinging each stop to its street
+        for(Street s : map.getStreets()) {
+            for(Stop t : s.getStops()) {
+                t.setStreet(map);
+            }
+        }
         guiController.setElements(mapObj);
-        guiController.updateTimer(1);
+        // let out the buses
+        for(Bus b : map.getBuses()) {
+            b.initBus();
+            if(b instanceof Update) {
+                guiController.updates.add((Update) b);
+            }
+            guiController.updateTimer(1, guiController);
+
+        }
     }
 }

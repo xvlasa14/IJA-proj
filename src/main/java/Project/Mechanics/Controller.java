@@ -8,12 +8,17 @@
  */
 package Project.Mechanics;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -21,16 +26,19 @@ import java.util.TimerTask;
 
 public class Controller {
     @FXML
-    private Pane content;
+    private Pane content;           // map space
     @FXML
-    private ToggleButton speedUp;
+    private ToggleButton speedUp;   // button for speeding up
     @FXML
-    private ToggleButton pause;
+    private ToggleButton pause;     // button for pausing
+    @FXML
+    private Label timeGUI;          // label for clock
 
-    private List<Draw> elements = new ArrayList<>();
-    private Timer timer;
-    private LocalTime time = LocalTime.now();
-    private List<Update> updates = new ArrayList<>();
+    private List<Draw> elements = new ArrayList<>();    // all elements that will end up on the map
+    private Timer timer;        // timer
+    private LocalTime time = LocalTime.of(6,0,0); // sets time to 6 AM
+    public List<Update> updates = new ArrayList<>();   // list of updates
+    private DateFormat format = new SimpleDateFormat("HH:mm:ss");   // format in which time will be displayed
 
     long speed = 1;
     int paused = 1;
@@ -39,7 +47,11 @@ public class Controller {
     }
 
 
-    /* - - - - - - - - - - - - - - - - - - ZOOM - - - - - - - - - - - - - - - - - - */
+    /**
+     * When scroll event happens, whole map can be zoomed
+     * in or out.
+     * @param scroll
+     */
     @FXML
     private void zoom(ScrollEvent scroll){
         scroll.consume();                   // set it only for the scroll pane
@@ -60,6 +72,9 @@ public class Controller {
         content.layout();
     }
 
+    /**
+     * Speeding up or slowing back down all buses
+     */
     @FXML
     private void speedUp() {
         timer.cancel();
@@ -69,9 +84,12 @@ public class Controller {
         else {
             speed = 6;
         }
-        updateTimer(speed);
+        updateTimer(speed, this);
     }
 
+    /**
+     * Pause all bus movement that is happening on the map
+     */
     @FXML
     private void pause() {
         paused = paused + 1;
@@ -79,10 +97,15 @@ public class Controller {
             timer.cancel();
         }
         else {
-            updateTimer(speed);
+            updateTimer(speed, this);
         }
     }
 
+    /**
+     * Iterates through all drawable elements and "draws" them on the map.
+     * If said elements impelemnts interface Update, update is added
+     * @param elements all elements that will be added to the map
+     */
     public void setElements(List<Draw> elements) {
         this.elements = elements;
         for (Draw draw : elements) {
@@ -93,15 +116,54 @@ public class Controller {
         }
     }
 
-    public void updateTimer(long speed){
+    /**
+     * Adds a bus on the map
+     * @param bus bus to be added
+     */
+    public void addBus(Draw bus) {
+        content.getChildren().addAll(bus.getGUI());
+    }
+
+    /**
+     * Removes bus from the map
+     * @param bus bus to be removed
+     */
+    public void removeBus(Draw bus) {
+        content.getChildren().removeAll(bus.getGUI());
+    }
+
+    /**
+     * GUI of the clock that will be displayed
+     * @param time
+     */
+    public void timeGUI(LocalTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        timeGUI.setText(time.format(formatter));
+    }
+
+    /**
+     * TO DO DOKUMENTACE TETO FUNKCE
+     * @param speed
+     * @param timeController
+     */
+    public void updateTimer(long speed, Controller timeController){
         timer = new Timer(false);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                time = time.plusSeconds((long) 0.5);
-                for(Update update :updates){
-                    update.update(time);
+                Platform.runLater(()->{
+                    timeGUI(time);
+                });
+                for(Update update : updates){
+                    Platform.runLater(()->{
+                        update.update(time, timeController);
+                        Platform.runLater(()->{
+                            update.traffic();
+                            update.stopAtStop();
+                        });
+                    });
                 }
+                time = time.plusSeconds((long) 0.5);
             }
         }, 0, 500 / speed);
 
