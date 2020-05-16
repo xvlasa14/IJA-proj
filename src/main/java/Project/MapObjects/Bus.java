@@ -6,10 +6,7 @@
  */
 package Project.MapObjects;
 
-import Project.Mechanics.Coordinate;
-import Project.Mechanics.Draw;
-import Project.Mechanics.Route;
-import Project.Mechanics.Update;
+import Project.Mechanics.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -32,9 +29,10 @@ public class Bus implements Draw, Update {
     private double speed;           // speed at which is bus moving
     @JsonIgnore
     public double distance = 0;     // distance driven by the bus
+    @JsonIgnore
     private Route route;            // it's route
-    private String startAt;         // time at which this bus starts moving
-
+    private String startsAt;         // time at which this bus starts moving
+    private Line line;              // line to which bus belongs
     @JsonIgnore
     private LocalTime time;
     @JsonIgnore
@@ -50,13 +48,86 @@ public class Bus implements Draw, Update {
      * @param route route which the bus takes
      * @param busID bus ID in X.Y format
      */
-    public Bus(Coordinate position, double speed, Route route, String busID) {
+    public Bus(Line line, LocalTime time, String startsAt, Coordinate position, double speed, Route route, String busID) {
+        this.line = line;
+        this.startsAt = startsAt;
         this.busID = busID;
         this.position = position;
         this.speed = speed;
         this.route = route;
         GUI = new ArrayList<>();
         GUI.add(new Circle(position.getX(), position.getY(), 5, Color.PINK));
+    }
+
+    public String getBusID() {
+        return busID;
+    }
+
+    public void setBusID(String busID) {
+        this.busID = busID;
+    }
+
+    public Coordinate getPosition() {
+        return position;
+    }
+
+    public void setPosition(Coordinate position) {
+        this.position = position;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+    }
+
+    public String getStartsAt() {
+        return startsAt;
+    }
+
+    public void setStartsAt(String startsAt) {
+        this.startsAt = startsAt;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public void setLine(Line line) {
+        this.line = line;
+    }
+
+    @JsonIgnore
+    public LocalTime getTime() {
+        return time;
+    }
+
+    @JsonIgnore
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+    @JsonIgnore
+    public void setStart() {
+        position = line.getStops().get(0).getStreet().getStart();
     }
 
     /**
