@@ -41,7 +41,7 @@ public class Coordinate {
 
     // set y coordinate
     public void setY(double y) {
-        if(y > 0) {
+        if(y < 0) {
             this.y = 0;
         }
         else {

@@ -13,11 +13,55 @@ public class Street implements Draw {
     private Coordinate begin;
     private Coordinate end;
     private String streetName;
+    private double traffic;
+    private List<Stop> stops;
 
-    public Street(String name, Coordinate begin, Coordinate end) {
+    public Street(Coordinate begin, Coordinate end, String streetName, double traffic, List<Stop> stops) {
         this.begin = begin;
         this.end = end;
-        this.streetName = name;
+        this.streetName = streetName;
+        this.traffic = traffic;
+        this.stops = stops;
+    }
+
+    public Coordinate getBegin() {
+        return begin;
+    }
+
+    public Coordinate getEnd() {
+        return end;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public double getTraffic() {
+        return traffic;
+    }
+
+    public List<Stop> getStops() {
+        return stops;
+    }
+
+    public void setBegin(Coordinate begin) {
+        this.begin = begin;
+    }
+
+    public void setEnd(Coordinate end) {
+        this.end = end;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
+    public void setTraffic(double traffic) {
+        this.traffic = traffic;
+    }
+
+    public void setStops(List<Stop> stops) {
+        this.stops = stops;
     }
 
     @Override
