@@ -13,7 +13,7 @@ import java.util.List;
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lineID")
 public class Line {
-    private Integer lineID;     // lines ID
+    private String lineID;     // lines ID
     private String color;       // color of the buses that belong to this line
     private List<Stop> stops;   // stops of this line
 
@@ -23,17 +23,19 @@ public class Line {
      * @param color color of the buses in this line
      * @param stops stops on the line
      */
-    public Line(Integer lineID, String color, List<Stop> stops) {
+    public Line(String lineID, String color, List<Stop> stops) {
         this.lineID = lineID;
         this.color = color;
         this.stops = stops;
+    }
+    private Line() {
     }
 
     /**
      * Gets line ID
      * @return line ID
      */
-    public Integer getLineID() {
+    public String getLineID() {
         return lineID;
     }
 
@@ -41,7 +43,7 @@ public class Line {
      * sets line ID
      * @param lineID line ID to be set
      */
-    public void setLineID(Integer lineID) {
+    public void setLineID(String lineID) {
         this.lineID = lineID;
     }
 
