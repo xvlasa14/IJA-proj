@@ -12,18 +12,18 @@ import java.util.List;
 public class Street implements Draw {
     private Coordinate begin;
     private Coordinate end;
-    private String name;
+    private String streetName;
 
     public Street(String name, Coordinate begin, Coordinate end) {
         this.begin = begin;
         this.end = end;
-        this.name = name;
+        this.streetName = name;
     }
 
     @Override
     public List<Shape> getGUI() {
         double xText = (begin.getX() + end.getX()) / 2;
         double yText = ((begin.getY() + end.getY()) / 2) - 5;
-        return Arrays.asList(new Text(xText, yText, name),new Line(begin.getX(), begin.getY(), end.getX(), end.getY()));
+        return Arrays.asList(new Text(xText, yText, streetName),new Line(begin.getX(), begin.getY(), end.getX(), end.getY()));
     }
 }

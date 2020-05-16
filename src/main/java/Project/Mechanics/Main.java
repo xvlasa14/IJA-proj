@@ -11,6 +11,9 @@
 package Project.Mechanics;
 import Project.MapObjects.Bus;
 import Project.MapObjects.Street;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -34,6 +37,11 @@ public class Main extends Application {
 
         Controller guiController = loadGUI.getController();
         List<Draw> mapObj = new ArrayList<>();
+
+        YAMLFactory map = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+        ObjectMapper mapper = new ObjectMapper(map);
+
+
 
         Coordinate pointOne = new Coordinate(100, 100);
         Coordinate pointTwo = new Coordinate(200, 200);
