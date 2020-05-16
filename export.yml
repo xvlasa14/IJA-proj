@@ -1,6 +1,7 @@
 stops:
 - &Stop0 id: "stop0"
   coordinates:
+    x: 385.6715705361016
     y: 113.97040711426526
 - &Stop1 id: "stop1"
   coordinates:

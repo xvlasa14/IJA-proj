@@ -10,6 +10,9 @@ import Project.Mechanics.Coordinate;
 import Project.Mechanics.Draw;
 import Project.Mechanics.Route;
 import Project.Mechanics.Update;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -21,11 +24,23 @@ import java.util.List;
 /**
  * Represents bus on the map.
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "busID")
 public class Bus implements Draw, Update {
+    private String busID;           // bus ID in X.Y format where X is the line and Y is number of the bus
+    @JsonIgnore
     private Coordinate position;    // current position
     private double speed;           // speed at which is bus moving
+    @JsonIgnore
     public double distance = 0;     // distance driven by the bus
     private Route route;            // it's route
+    private String startAt;         // time at which this bus starts moving
+
+    @JsonIgnore
+    private LocalTime time;
+    @JsonIgnore
+
+
+
     private List<Shape> GUI;
 
     /**
@@ -33,8 +48,10 @@ public class Bus implements Draw, Update {
      * @param position default bus position
      * @param speed bus speed
      * @param route route which the bus takes
+     * @param busID bus ID in X.Y format
      */
-    public Bus(Coordinate position, double speed, Route route) {
+    public Bus(Coordinate position, double speed, Route route, String busID) {
+        this.busID = busID;
         this.position = position;
         this.speed = speed;
         this.route = route;
