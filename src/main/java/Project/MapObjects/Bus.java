@@ -20,6 +20,7 @@ import javafx.scene.shape.Shape;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents bus on the map.
@@ -34,10 +35,10 @@ public class Bus implements Draw, Update {
     public double distance = 0;         // distance driven by the bus
     @JsonIgnore
     private Route route;                // it's route
-    private String startsAt;            // time at which this bus starts moving
+    private List<String> timeString;    // times at which this bus starts moving
     private Line line;                  // line to which bus belongs
     @JsonIgnore
-    private LocalTime time;
+    private List<LocalTime> timeLocal;  // starting time in time format
     @JsonIgnore
     private List<Shape> GUI;
     @JsonIgnore
@@ -48,29 +49,22 @@ public class Bus implements Draw, Update {
     /**
      * Constructor for bus
      * @param speed its speed
-     * @param startsAt time at which the bus starts
+     * @param timeString time at which the bus starts (in string)
      * @param line line to which it belongs
-     * @param time time
+     * @param timeLocal time in local time format
      */
-    public Bus(double speed, String startsAt, Line line, LocalTime time) {
+    public Bus(double speed, List<String> timeString, Line line, List<LocalTime> timeLocal, String busID) {
+        this.busID = busID;
         this.speed = speed;
-        this.startsAt = startsAt;
+        this.timeString = timeString;
         this.line = line;
-        this.time = time;
-        setGUI();
+        this.timeLocal = timeLocal;
     }
     private Bus() {
     }
-
     /**
-     * Set GUI in the form of a circle of certain color and radius. Color is taken
-     * from line to which this bus belongs.
+     * GETTERY A SETTERY
      */
-    public void setGUI() {
-        GUI = new ArrayList<>();
-        GUI.add(new Circle(position.getX(), position.getY(), 5, Color.web(line.getColor())));
-    }
-
 
     public String getBusID() {
         return busID;
@@ -112,12 +106,12 @@ public class Bus implements Draw, Update {
         this.route = route;
     }
 
-    public String getStartsAt() {
-        return startsAt;
+    public List<String> getTimeString() {
+        return timeString;
     }
 
-    public void setStartsAt(String startsAt) {
-        this.startsAt = startsAt;
+    public void setTimeString(List<String> timeString) {
+        this.timeString = timeString;
     }
 
     public Line getLine() {
@@ -128,23 +122,68 @@ public class Bus implements Draw, Update {
         this.line = line;
     }
 
-    @JsonIgnore
-    public LocalTime getTime() {
-        return time;
+    public List<LocalTime> getTimeLocal() {
+        return timeLocal;
     }
 
-    @JsonIgnore
-    public void setTime(String startsAt) {
-        this.time = LocalTime.parse(startsAt);
+    public void setTimeLocal(List<String> timeString) {
+        timeLocal = new ArrayList<>();
+        for( String t : timeString){
+            timeLocal.add(LocalTime.parse(t));
+        }
     }
 
-    @JsonIgnore
-    public void setStart() {
-        position = line.getStops().get(0).getStreet().getBegin();
+    public void setGUI(List<Shape> GUI) {
+        this.GUI = GUI;
     }
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public double getSpeedSet() {
+        return speedSet;
+    }
+
+    public void setSpeedSet(double speedSet) {
+        this.speedSet = speedSet;
+    }
+
+    public int getWait() {
+        return wait;
+    }
+
+    public void setWait(int wait) {
+        this.wait = wait;
+    }
+
+    /**
+     * Sets the starting position to beginning coordinate of
+     * the first street on which first stop lies
+     */
+    public void setStart() {
+        position = line.getStops().get(0).getStreet().getBegin();
+    }
+    /**
+     * Set GUI in the form of a circle of certain color and radius. Color is taken
+     * from line to which this bus belongs.
+     */
+    public void setGUI() {
+        GUI = new ArrayList<>();
+        GUI.add(new Circle(position.getX(), position.getY(), 5, Color.web(line.getColor())));
+    }
+
+    /**
+     * Gets the GUI of bus
+     * @return GUI
+     */
+    @Override
+    public List<Shape> getGUI() {
+        return GUI;
     }
 
     /**
@@ -160,15 +199,6 @@ public class Bus implements Draw, Update {
     }
 
     /**
-     * Gets the GUI of bus
-     * @return GUI
-     */
-    @Override
-    public List<Shape> getGUI() {
-        return GUI;
-    }
-
-    /**
      * At the right time, function places a bus on the map and
      * when said bus finishes his route, it is removed from the map.
      * @param locTime current time (in program runtime terms)
@@ -177,16 +207,21 @@ public class Bus implements Draw, Update {
     @Override
     public void update(LocalTime locTime, Controller busController) {
         // if it's time to start the route (current time is equal to time of the bus)
-        if(locTime.equals(time)) {
+        if(locTime.equals(timeLocal.get(0))) {
+            if(busController.getActiveBuses().contains(this)){
+                return;
+            }
+            busController.getActiveBuses().add(this);
             busController.addBus(this::getGUI); // add bus to the map
             isActive = true;    // set bus to active
         }
         // else if it's after the starting time
-        else if(locTime.isAfter(time)) {
+        else if(locTime.isAfter(timeLocal.get(0))) {
             distance += speed;
             double routeLength = route.totalDistance();
             if(routeLength < distance) {
                 busController.removeBus(this::getGUI);
+                busController.getActiveBuses().remove(this);
                 return;
             }
             Coordinate c = route.nextPosition(distance);
@@ -228,19 +263,25 @@ public class Bus implements Draw, Update {
     @Override
     public void stopAtStop() {
         for(Stop t : route.getThisStreet().getStops()) {
-            // TO DO vypocítat odchylku
-            // if odchylka je oukej: (následující bude v ifu výsledku té odchylky
-            if(wait == 0) {
-                wait = 4;
-                speed = 0;
-            }
-            else {
-                wait = wait - 1;
+            double deviationX = 0;
+            double deviationY = 0;
+            deviationX = Math.abs(Math.abs(t.getCoordinates().getX() - Math.abs(position.getX())));
+            deviationY = Math.abs(Math.abs(t.getCoordinates().getY() - Math.abs(position.getY())));
+
+            if(deviationX  < 2.0 && deviationY < 2.0){
+                System.out.println("BUS " + busID + "IS AT STOP " + t.getStopName() + "\n");
                 if(wait == 0) {
-                    speed = speedSet;
+                    wait = 6;
+                    speed = 0;
                 }
+                else {
+                    wait = wait - 1;
+                    if(wait == 0) {
+                        speed = speedSet;
+                    }
+                }
+                break;
             }
-            break;
         }
     }
 
@@ -255,7 +296,7 @@ public class Bus implements Draw, Update {
     public void initBus(){
         setStart();
         setGUI();
-        setTime(startsAt);
+        setTimeLocal(timeString);
         route = new Route();
         route.setRoute(line.getStops());
         speedSet = speed;
@@ -274,7 +315,31 @@ public class Bus implements Draw, Update {
     @Override
     public String toString() {
         return "Bus " + busID + " line: " + line + '\n' +
-               "  Starts at: " + startsAt + '\n' +
+               "  Starts at: " + timeString + '\n' +
                "      Speed: " +  speed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bus bus = (Bus) o;
+        return Double.compare(bus.speed, speed) == 0 &&
+                Double.compare(bus.distance, distance) == 0 &&
+                isActive == bus.isActive &&
+                Double.compare(bus.speedSet, speedSet) == 0 &&
+                wait == bus.wait &&
+                Objects.equals(busID, bus.busID) &&
+                Objects.equals(position, bus.position) &&
+                Objects.equals(route, bus.route) &&
+                Objects.equals(timeString, bus.timeString) &&
+                Objects.equals(line, bus.line) &&
+                Objects.equals(timeLocal, bus.timeLocal) &&
+                Objects.equals(GUI, bus.GUI);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(busID, position, speed, distance, route, timeString, line, timeLocal, GUI, isActive, speedSet, wait);
     }
 }

@@ -139,7 +139,7 @@ public class Route extends Coordinate {
     public double totalDistance(){
         double totalDistance = 0;
         for (int i = 0; i < route.size() - 1; i++){
-            totalDistance = totalDistance + route.get(i).calculateDistance(this, route.get(i + 1));
+            totalDistance = totalDistance + calculateDistance(route.get(i), route.get(i + 1));
         }
         return totalDistance;
     }
@@ -195,10 +195,6 @@ public class Route extends Coordinate {
         finalY = one.getY() + diff(one, two, 0) * soFar;       // get final Y coordinate
         finalPosition = new Coordinate(finalX, finalY);                  // get the final position
 
-        // if coordinates are more than last coordinate of this route, return that last coordinate as final
-        if (route.get(route.size() - 1).getX() < finalPosition.getX() || route.get(route.size() - 1).getY() < finalPosition.getY()){
-            return route.get(route.size() - 1);
-        }
         return finalPosition;
     }
 }

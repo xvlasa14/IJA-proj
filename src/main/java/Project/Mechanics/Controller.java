@@ -8,6 +8,8 @@
  */
 package Project.Mechanics;
 
+import Project.MapObjects.Bus;
+import Project.MapObjects.Map;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -37,9 +39,12 @@ public class Controller {
     private List<Draw> elements = new ArrayList<>();    // all elements that will end up on the map
     private Timer timer;        // timer
     private LocalTime time = LocalTime.of(6,0,0); // sets time to 6 AM
+    private LocalTime endTime = LocalTime.of(00,00,00); // set ending time to midnight
     public List<Update> updates = new ArrayList<>();   // list of updates
     private DateFormat format = new SimpleDateFormat("HH:mm:ss");   // format in which time will be displayed
 
+    private List<Bus> activeBuses = new ArrayList<>();
+    private Map map;
     long speed = 1;
     int paused = 1;
 
@@ -103,7 +108,7 @@ public class Controller {
 
     /**
      * Iterates through all drawable elements and "draws" them on the map.
-     * If said elements impelemnts interface Update, update is added
+     * If said elements implements interface Update, update is added
      * @param elements all elements that will be added to the map
      */
     public void setElements(List<Draw> elements) {
@@ -158,16 +163,27 @@ public class Controller {
                     Platform.runLater(()->{
                         update.update(time, timeController);
                         Platform.runLater(()->{
-                            update.traffic();
+                             //update.traffic();
                             update.stopAtStop();
                         });
                     });
                 }
-                time = time.plusSeconds((long) 0.5);
+                time = time.plusSeconds(30);
             }
-        }, 0, 500 / speed);
+        }, 0, 200 / speed);
 
     }
 
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public List<Bus> getActiveBuses() {
+        return activeBuses;
+    }
 }
 

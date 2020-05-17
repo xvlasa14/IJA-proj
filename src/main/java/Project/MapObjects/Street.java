@@ -193,5 +193,9 @@ public class Street implements Draw {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "Street " + sName + '\n' +
+                "traffic: " + traffic;
+    }
 }

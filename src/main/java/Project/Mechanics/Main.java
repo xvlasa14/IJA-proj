@@ -29,8 +29,9 @@ import java.util.List;
 public class Main extends Application {
     /**
      * Starts the stage. Loads the GUI, opens the window,
-     * loads elements.
-     * @param primaryStage primary stage where the GUI happens
+     * loads elements from YML file.
+     * @param primaryStage window with GUI
+     * @throws Exception exception that occurs while the application is running
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -48,7 +49,7 @@ public class Main extends Application {
         mapObj.addAll(map.getStreets());
         mapObj.addAll(map.getStops());
 
-        // assinging each stop to its street
+        // assigning each stop to its street
         for(Street s : map.getStreets()) {
             for(Stop t : s.getStops()) {
                 t.setStreet(map);
@@ -61,6 +62,8 @@ public class Main extends Application {
             if(b instanceof Update) {
                 guiController.updates.add((Update) b);
             }
+            guiController.setMap(map);
+          //  System.out.println(map.getStreets());
             guiController.updateTimer(1, guiController);
 
         }
