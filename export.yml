@@ -45,12 +45,12 @@ stops:
     y: 711.4558585516136
 - &Stop11 stopName: "stop11"
   coordinates:
-    x: 632.1329123243019
-    y: 521.8306300707269
+    x: 635.26464
+    y: 523.10482
 - &Stop12 stopName: "stop12"
   coordinates:
-    x: 733.4014697494474
-    y: 265.88533013609424
+    x: 738.16967
+    y: 266.0094
 - &Stop13 stopName: "stop13"
   coordinates:
     x: 601.3062256962204
@@ -65,12 +65,12 @@ stops:
     y: 603.5609147991112
 - &Stop16 stopName: "stop16"
   coordinates:
-    x: 727.0441441759646
-    y: 603.5198768162325
+    x: 729.17922
+    y: 603.56851
 - &Stop17 stopName: "stop17"
   coordinates:
-    x: 667.8067840397231
-    y: 724.7507815398084
+    x: 668.09893
+    y: 725.53301
 - &Stop18 stopName: "stop18"
   coordinates:
     x: 77.49911140751087
