@@ -35,7 +35,7 @@ public class Bus implements Draw, Update {
     private Coordinate position;        // current position
     private double speed;               // speed at which is bus moving
     @JsonIgnore
-    public double distance = 0;         // distance driven by the bus
+    public double distance = 0;         // distance traveled by the bus
     @JsonIgnore
     private Route route;                // it's route
     public static List<String> timeString;    // times at which this bus starts moving
@@ -53,7 +53,7 @@ public class Bus implements Draw, Update {
     @FXML
     private List<Shape> stopText;
     private ArrayList<Shape> sGUI;
-    private ArrayList<Shape> sStop;
+    private boolean schedGUI = false;
 
 
 
@@ -73,70 +73,131 @@ public class Bus implements Draw, Update {
     }
     private Bus() {
     }
-    /**
-     * GETTERY A SETTERY
-     */
 
+    /**
+     * Gets bus id
+     * @return busID
+     */
     public String getBusID() {
         return busID;
     }
 
+    /**
+     * Sets bus id
+     * @param busID id to be set
+     */
     public void setBusID(String busID) {
         this.busID = busID;
     }
 
+    /**
+     * Gets position of a bus
+     * @return position in coordinates
+     */
     public Coordinate getPosition() {
         return position;
     }
 
+    /**
+     * Sets bus' position
+     * @param position where bus currently is
+     */
     public void setPosition(Coordinate position) {
         this.position = position;
     }
 
+    /**
+     * Gets the speed of a bus
+     * @return speed
+     */
     public double getSpeed() {
         return speed;
     }
 
+    /**
+     * Sets speed of a bus
+     * @param speed speed to be set
+     */
     public void setSpeed(double speed) {
         this.speed = speed;
     }
 
+    /**
+     * Gets distance so far traveled by a bus
+     * @return
+     */
     public double getDistance() {
         return distance;
     }
 
+    /**
+     * Sets distance traveled by this bus
+     * @param distance distance traveled
+     */
     public void setDistance(double distance) {
         this.distance = distance;
     }
 
+    /**
+     * Gets route this bus takes
+     * @return route of this bus
+     */
     public Route getRoute() {
         return route;
     }
 
+    /**
+     * Sets route that will be traveled by this bus
+     * @param route to be traveled
+     */
     public void setRoute(Route route) {
         this.route = route;
     }
 
+    /**
+     * Gets list of times in string form
+     * @return List of times
+     */
     public List<String> getTimeString() {
         return timeString;
     }
 
+    /**
+     * Sets list of times in string form
+     * @param timeString list of times to be set
+     */
     public void setTimeString(List<String> timeString) {
         this.timeString = timeString;
     }
 
+    /**
+     * Gets line
+     * @return line
+     */
     public Line getLine() {
         return line;
     }
 
+    /**
+     * Sets line
+     * @param line line to be set
+     */
     public void setLine(Line line) {
         this.line = line;
     }
 
+    /**
+     * Gets time in LocalTime format
+     * @return list of times
+     */
     public List<LocalTime> getTimeLocal() {
         return timeLocal;
     }
 
+    /**
+     * Converts time in string to localtime format
+     * @param timeString
+     */
     public void setTimeLocal(List<String> timeString) {
         timeLocal = new ArrayList<>();
         for( String t : timeString){
@@ -144,30 +205,58 @@ public class Bus implements Draw, Update {
         }
     }
 
+    /**
+     * Sets GUI
+     * @param GUI gui to be set
+     */
     public void setGUI(List<Shape> GUI) {
         this.GUI = GUI;
     }
 
+    /**
+     * Returns the value of isActive varualbe
+     * @return
+     */
     public boolean isActive() {
         return isActive;
     }
 
+    /**
+     * Sets isActive varuable
+     * @param active true/false
+     */
     public void setActive(boolean active) {
         isActive = active;
     }
 
+    /**
+     * Gets default speed
+     * @return
+     */
     public double getSpeedSet() {
         return speedSet;
     }
 
+    /**
+     * Sets default speed
+     * @param speedSet
+     */
     public void setSpeedSet(double speedSet) {
         this.speedSet = speedSet;
     }
 
+    /**
+     * Gets wait time
+     * @return wait time
+     */
     public int getWait() {
         return wait;
     }
 
+    /**
+     * Sets wait time to given int
+     * @param wait wait time
+     */
     public void setWait(int wait) {
         this.wait = wait;
     }
@@ -202,6 +291,10 @@ public class Bus implements Draw, Update {
         }
     }
 
+    /**
+     * Creates a line schedule list, color coded
+     * @param schedule controller that controls coloring of stop ID's
+     */
     public void getStopList(Controller schedule) {
         double x = 85;
         double y = 40;
@@ -239,7 +332,10 @@ public class Bus implements Draw, Update {
     public void update(LocalTime locTime, Controller busController) {
         // if it's time to start the route (current time is equal to time of the bus)
             getStopList(busController);
-
+            if(schedGUI == true){
+                scheduleGUI();
+                busController.getS(sGUI);
+            }
         if(locTime.equals(timeLocal.get(0))) {
             if(busController.getActiveBuses().contains(this)){
                 return;
@@ -263,6 +359,10 @@ public class Bus implements Draw, Update {
         }
     }
 
+    /**
+     * calculates if this bus is on a street
+     * @return street on which bus is currently
+     */
     private Street busOnStreet(){
         for(Street s : route.getRouteStreets()){
             Coordinate sBegin = s.getBegin();
@@ -406,43 +506,38 @@ public class Bus implements Draw, Update {
                         s.getGUI().get(0).setStroke(Color.web(line.getColor()));
                         s.getGUI().get(0).setStrokeWidth(1.2);
                     }
-                    // TO DO GET LINE GUI
+                    schedGUI = true;
+                    scheduleGUI();
                 }
             }
         });
     }
 
-    /* public void scheduleGUI(){
+    /**
+     * Creates GUI that indicates stops bus already visited
+     */
+     public void scheduleGUI(){
         sGUI = new ArrayList<>();
-        sStop = new ArrayList<>();
         double x = 50;
-        double y = -30;
+        double y = 10;
 
         int t = 0;
-        Text stopTitle = new Text(x, y, )
-        for(Line line : schedule.getMap().getLines()){
-            int timeCode = 0;
-            Text title = new Text(x - 25, y, "LINE SCHEDULE");
-            title.setFont(Font.font("Garamond", FontWeight.SEMI_BOLD, 20));
-            title.setStroke(Color.web(line.getColor()));
-            stopText.add(title);
-            y = y + 22;
-            for(Stop s : line.getStops()){
-                String timeText = timeString.get(timeCode + 1);
-                Text tempText = new Text(x, y, s.getStopName() + "      " + timeText);
-                timeCode = timeCode + 1;
-
-                tempText.setFont(Font.font("Garamond", FontWeight.LIGHT, 15));
-                tempText.setStroke(Color.LIGHTGRAY);
-
-                stopText.add(tempText);
-                y = y + 22;
+        for(Stop p : line.getStops()){
+            Text stopNameText = new Text(x, y, p.getStopName());
+            t = t + 1;
+            if(visited.contains(p.getStopName())){
+                stopNameText.setFont(Font.font("Garamond", FontWeight.SEMI_BOLD, 15));
+                stopNameText.setStroke(Color.web(line.getColor()));
             }
-            schedule.drawGUI(stopText);
-            y = y + 50;
+            else {
+                stopNameText.setFont(Font.font("Garamond", FontWeight.LIGHT, 15));
+                stopNameText.setStroke(Color.LIGHTGRAY);
+            }
+            sGUI.add(stopNameText);
+            x = x + 60;
         }
+    }
 
-    } */
 
     @Override
     public String toString() {

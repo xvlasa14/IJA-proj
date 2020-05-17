@@ -41,8 +41,7 @@ public class Stop implements Draw {
     }
 
     /**
-     * Sets the GUI for a stop
-     * @return GUI in the form of dot with text above it
+     * Sets the GUI for a stop - text and little dot
      */
     public void setGUI() {
         GUI = new ArrayList<>();
@@ -61,6 +60,10 @@ public class Stop implements Draw {
         return GUI;
     }
 
+    /**
+     * Sets street on which stop is located
+     * @param map map containing all streets
+     */
     public void setStreet(Map map) {
         List<Street> streets = map.getStreets();
         for (Street s : streets) {
@@ -72,23 +75,42 @@ public class Stop implements Draw {
         }
     }
 
+    /**
+     * Gets this street
+     * @return street on which stop is located
+     */
     public Street getStreet() {
         return street;
     }
 
-
+    /**
+     * Gets the name of a stop
+     * @return name of this stop
+     */
     public String getStopName() {
         return stopName;
     }
 
+    /**
+     * Sets the name of a stop
+     * @param stopName name to be set.
+     */
     public void setStopName(String stopName) {
         this.stopName = stopName;
     }
 
+    /**
+     * Gets coordinates of this stop
+     * @return stop location
+     */
     public Coordinate getCoordinates() {
         return coordinates;
     }
 
+    /**
+     * Sets coordinates of this stop
+     * @param coordinates where stop will be located
+     */
     public void setCoordinates(Coordinate coordinates) {
         this.coordinates = coordinates;
     }
@@ -99,6 +121,9 @@ public class Stop implements Draw {
                "  Coordinates:" + coordinates;
     }
 
+    /**
+     * Stop constructor for loading from YML file
+     */
     static class stopConstructor extends StdConverter<Stop, Stop> {
          @Override
         public Stop convert(Stop val){

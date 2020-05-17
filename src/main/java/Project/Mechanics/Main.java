@@ -26,6 +26,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main class that is run when application is started
+ */
 public class Main extends Application {
     /**
      * Starts the stage. Loads the GUI, opens the window,

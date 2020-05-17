@@ -12,6 +12,13 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
+/**
+ * "Drawing" the GUI
+ */
 public interface Draw {
+    /**
+     * Gets GUI
+     * @return list of shapes that make up a GUI
+     */
     List<Shape> getGUI();
 }

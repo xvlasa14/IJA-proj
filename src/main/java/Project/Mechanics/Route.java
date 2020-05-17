@@ -6,6 +6,9 @@ import Project.MapObjects.Street;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a route which a bus will take
+ */
 public class Route extends Coordinate {
     private List<Coordinate> route;     // list of coordinates representing a route
     private List<Street> routeStreets;  // list of streets on this route

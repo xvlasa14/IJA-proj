@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Controllers that handle events and GUI
+ */
 public class Controller {
     @FXML
     private Pane content;           // map space
@@ -42,10 +45,12 @@ public class Controller {
     private DateFormat format = new SimpleDateFormat("HH:mm:ss");   // format in which time will be displayed
     private List<Bus> activeBuses = new ArrayList<>();
     private Map map;
-    long speed = 4;
+    long speed = 3;
     int paused = 1;
     @FXML
     private AnchorPane stopList;
+    @FXML
+    private Pane schedule;
 
     public Controller() {
     }
@@ -83,7 +88,7 @@ public class Controller {
     private void speedUp() {
         timer.cancel();
         if (speed == 8) {
-            speed = 4;
+            speed = 3;
         }
         else {
             speed = 8;
@@ -100,8 +105,12 @@ public class Controller {
 
     }
 
+    /**
+     * Resets time when default end of day time occurs. Removes
+     * all stops from
+     */
     private void resetTime() {
-        stopList.getChildren().removeAll(stopList.getChildren());
+        schedule.getChildren().removeAll(schedule.getChildren());
         for(Bus b : getActiveBuses()){
             b.setDistance(0);
             content.getChildren().removeAll(b.getGUI());
@@ -166,9 +175,9 @@ public class Controller {
     }
 
     /**
-     * TO DO DOKUMENTACE TETO FUNKCE
-     * @param speed
-     * @param timeController
+     * Updates timers, takes care of adding 30 secongs every second
+     * @param speed can be slowed down/speeded up by this number
+     * @param timeController controls things that happen with time
      */
     public void updateTimer(long speed, Controller timeController){
         timer = new Timer(false);
@@ -194,7 +203,8 @@ public class Controller {
     }
 
     /**
-     * Draws GUI for bus line
+     * Draws GUI for bus line schedules
+     * @param lineStops
      */
     public void drawGUI(List<Shape> lineStops){
         stopList.getChildren().removeAll(stopList.getChildren());
@@ -202,8 +212,19 @@ public class Controller {
             stopList.getChildren().addAll(s);
         }
     }
+
     /**
-     * Reset traffic
+     * Gets gui for line schedule
+     * @param scheduleList list of stop names
+     */
+    public void getS(List<Shape> scheduleList){
+        schedule.getChildren().removeAll(schedule.getChildren());
+        for(Shape s : scheduleList){
+            schedule.getChildren().addAll(s);
+        }
+    }
+    /**
+     * Resets traffic when button is pushed
      */
     @FXML
     private void resetTraffic(){
@@ -213,14 +234,26 @@ public class Controller {
         }
     }
 
+    /**
+     * Sets map
+     * @param map map to be set
+     */
     public void setMap(Map map) {
         this.map = map;
     }
 
+    /**
+     * Gets map
+     * @return map
+     */
     public Map getMap() {
         return map;
     }
 
+    /**
+     * Gets active buses (buses on route)
+     * @return list of buses
+     */
     public List<Bus> getActiveBuses() {
         return activeBuses;
     }

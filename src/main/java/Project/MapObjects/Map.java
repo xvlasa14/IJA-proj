@@ -1,3 +1,9 @@
+/**
+ * <h2>Map</h2>
+ * @author Ales Jaksik (xjaksi01)
+ * @author Nela Vlasakova (xvlasa14)
+ * @since 04 2020
+ */
 package Project.MapObjects;
 
 import Project.Mechanics.Line;
@@ -5,6 +11,9 @@ import Project.Mechanics.Line;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the whole map
+ */
 public class Map {
     private List<Street> streets;
     private List<Stop> stops;

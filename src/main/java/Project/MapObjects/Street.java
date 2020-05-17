@@ -165,6 +165,10 @@ public class Street implements Draw {
         return GUI;
     }
 
+    /**
+     * if clicked on street, traffic is increased. Also width of
+     * the line that represents given street gets thicker.
+     */
     public void clickedStreet(){
         GUI.get(0).setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -178,12 +182,18 @@ public class Street implements Draw {
         });
     }
 
+    /**
+     * Gets GUI
+     * @return this GUI
+     */
     @Override
     public List<Shape> getGUI() {
         return this.GUI;
     }
 
-
+    /**
+     * Street constructor for loading from a YML file
+     */
     static class streetConstructor extends StdConverter<Street, Street> {
         @Override
         public Street convert(Street val){
