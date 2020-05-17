@@ -262,14 +262,16 @@ public class Bus implements Draw, Update {
      */
     @Override
     public void stopAtStop() {
-        for(Stop t : route.getThisStreet().getStops()) {
+        for(Stop t : route.getRouteStops()) {
             double deviationX = 0;
             double deviationY = 0;
             deviationX = Math.abs(Math.abs(t.getCoordinates().getX() - Math.abs(position.getX())));
             deviationY = Math.abs(Math.abs(t.getCoordinates().getY() - Math.abs(position.getY())));
 
+            System.out.println("odchylka x: " + deviationX + " odchylka y:" + deviationY);
+            System.out.println(t.getCoordinates() + "   " + position);
             if(deviationX  < 2.0 && deviationY < 2.0){
-                System.out.println("BUS " + busID + "IS AT STOP " + t.getStopName() + "\n");
+                System.out.println("Stal jsem!");
                 if(wait == 0) {
                     wait = 6;
                     speed = 0;
