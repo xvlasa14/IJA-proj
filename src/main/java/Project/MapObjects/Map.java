@@ -10,7 +10,6 @@ public class Map {
     private List<Stop> stops;
     private List<Bus> buses;
     private List<Line> lines;
-
     /**
      * Creates new lists for all elements of a map
      */

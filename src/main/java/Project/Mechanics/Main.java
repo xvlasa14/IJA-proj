@@ -45,7 +45,7 @@ public class Main extends Application {
         // loading data from file
         YAMLFactory base = new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         ObjectMapper mapper = new ObjectMapper(base);
-        Map map = mapper.readValue(new File("export.yml"), Map.class);
+        Map map = mapper.readValue(new File("map.yml"), Map.class);
         mapObj.addAll(map.getStreets());
         mapObj.addAll(map.getStops());
 
@@ -60,10 +60,9 @@ public class Main extends Application {
         for(Bus b : map.getBuses()) {
             b.initBus();
             if(b instanceof Update) {
-                guiController.updates.add((Update) b);
+                guiController.updates.add(b);
             }
             guiController.setMap(map);
-          //  System.out.println(map.getStreets());
             guiController.updateTimer(1, guiController);
 
         }

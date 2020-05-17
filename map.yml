@@ -319,15 +319,6 @@ lines:
     - *Stop14
     - *Stop15
     - *Stop21
-    - *Stop20
-    - *Stop0
-    - *Stop1
-    - *Stop5
-    - *Stop9
-    - *Stop14
-    - *Stop15
-    - *Stop21
-    - *Stop20
 - &Line1 lineID: 22
   color: "483D8B"
   stops:
@@ -352,6 +343,36 @@ buses:
 - &Bus0 busID: "11.1"
   line: *Line0
   timeString:
-    - 06:10:00
-  speed: 4
-
+    - 06:40:00
+    - 07:12:30
+    - 08:44
+    - 09:30
+    - 10:23
+    - 11:21
+    - 12:43:30
+    - 14:00
+  speed: 2
+- &Bus1 busID: "22.2"
+  line: *Line1
+  timeString:
+    - 06:20:00
+    - 06:52:30
+    - 08:24
+    - 09:10
+    - 10:01:30
+    - 10:59:30
+    - 12:22
+    - 13:38:30
+  speed: 2
+- &Bus2 busID: "33.1"
+  line: *Line2
+  timeString:
+    - 06:30:00
+    - 07:02:30
+    - 08:42
+    - 10:26
+    - 11:38:30
+    - 12:28:30
+    - 13:54
+    - 14:56:30
+  speed: 2

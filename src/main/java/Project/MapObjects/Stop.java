@@ -76,12 +76,6 @@ public class Stop implements Draw {
         return street;
     }
 
-    public boolean isStopOnStreet(Street street) {
-        // TO DO Aleš
-        // jestli je bod (zastávka = stop) na přímce (ulice = street)
-        // mezi dvěma body
-        return true;
-    }
 
     public String getStopName() {
         return stopName;

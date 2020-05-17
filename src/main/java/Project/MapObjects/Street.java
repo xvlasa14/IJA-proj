@@ -160,7 +160,7 @@ public class Street implements Draw {
         // construct GUI
         GUI.add(line);  // add line
         GUI.get(0).setStroke(Color.SLATEGRAY);  // set color of the line
-        GUI.get(0).setStrokeWidth(1);   // set the width of the line
+        GUI.get(0).setStrokeWidth(1.2);   // set the width of the line
         GUI.add(text); // add text
         return GUI;
     }

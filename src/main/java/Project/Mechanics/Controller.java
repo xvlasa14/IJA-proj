@@ -10,12 +10,14 @@ package Project.Mechanics;
 
 import Project.MapObjects.Bus;
 import Project.MapObjects.Map;
+import Project.MapObjects.Street;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,23 +32,20 @@ public class Controller {
     @FXML
     private Pane content;           // map space
     @FXML
-    private ToggleButton speedUp;   // button for speeding up
-    @FXML
-    private ToggleButton pause;     // button for pausing
-    @FXML
     private Label timeGUI;          // label for clock
 
     private List<Draw> elements = new ArrayList<>();    // all elements that will end up on the map
     private Timer timer;        // timer
     private LocalTime time = LocalTime.of(6,0,0); // sets time to 6 AM
-    private LocalTime endTime = LocalTime.of(00,00,00); // set ending time to midnight
+    private LocalTime endTime = LocalTime.of(23,59,59); // set ending time to midnight
     public List<Update> updates = new ArrayList<>();   // list of updates
     private DateFormat format = new SimpleDateFormat("HH:mm:ss");   // format in which time will be displayed
-
     private List<Bus> activeBuses = new ArrayList<>();
     private Map map;
-    long speed = 1;
+    long speed = 4;
     int paused = 1;
+    @FXML
+    private AnchorPane stopList;
 
     public Controller() {
     }
@@ -83,11 +82,11 @@ public class Controller {
     @FXML
     private void speedUp() {
         timer.cancel();
-        if (speed == 6) {
-            speed = 1;
+        if (speed == 8) {
+            speed = 4;
         }
         else {
-            speed = 6;
+            speed = 8;
         }
         updateTimer(speed, this);
     }
@@ -96,14 +95,34 @@ public class Controller {
      * Pause all bus movement that is happening on the map
      */
     @FXML
-    private void pause() {
-        paused = paused + 1;
-        if(paused % 2 == 0) {
-            timer.cancel();
+    private void nextDay() {
+        resetTime();
+
+    }
+
+    private void resetTime() {
+        stopList.getChildren().removeAll(stopList.getChildren());
+        for(Bus b : getActiveBuses()){
+            b.setDistance(0);
+            content.getChildren().removeAll(b.getGUI());
+            b.setSpeed(b.getSpeed());
+            b.initBus();
+            b.visited.clear();
         }
-        else {
-            updateTimer(speed, this);
+        for(Update u : updates) {
+            if(u instanceof Bus) {
+                ((Bus) u).setDistance(0);
+                ((Bus) u).initBus();
+            }
         }
+        for(int i = 0; i < map.getStreets().size(); i++){
+            map.getStreets().get(i).setGUI();
+            map.getStreets().get(i).setTraffic(0);
+        }
+        getActiveBuses().clear();
+        time = LocalTime.of(6,00, 00);
+        timer.cancel();
+        updateTimer(1, this);
     }
 
     /**
@@ -142,8 +161,8 @@ public class Controller {
      * @param time
      */
     public void timeGUI(LocalTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        timeGUI.setText(time.format(formatter));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            timeGUI.setText(time.format(formatter));
     }
 
     /**
@@ -157,14 +176,14 @@ public class Controller {
             @Override
             public void run() {
                 Platform.runLater(()->{
-                    timeGUI(time);
+                        timeGUI(time);
                 });
                 for(Update update : updates){
                     Platform.runLater(()->{
                         update.update(time, timeController);
                         Platform.runLater(()->{
-                             //update.traffic();
-                            update.stopAtStop();
+                            update.stopAtStop(time);
+                            update.traffic();
                         });
                     });
                 }
@@ -172,6 +191,26 @@ public class Controller {
             }
         }, 0, 200 / speed);
 
+    }
+
+    /**
+     * Draws GUI for bus line
+     */
+    public void drawGUI(List<Shape> lineStops){
+        stopList.getChildren().removeAll(stopList.getChildren());
+        for(Shape s : lineStops) {
+            stopList.getChildren().addAll(s);
+        }
+    }
+    /**
+     * Reset traffic
+     */
+    @FXML
+    private void resetTraffic(){
+        for(Street s : map.getStreets()){
+            s.setTraffic(0);
+            s.getGUI().get(0).setStrokeWidth(1.2);   // set the width of the line
+        }
     }
 
     public void setMap(Map map) {

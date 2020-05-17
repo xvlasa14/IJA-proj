@@ -16,6 +16,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ public class Bus implements Draw, Update {
     public double distance = 0;         // distance driven by the bus
     @JsonIgnore
     private Route route;                // it's route
-    private List<String> timeString;    // times at which this bus starts moving
+    public static List<String> timeString;    // times at which this bus starts moving
     private Line line;                  // line to which bus belongs
     @JsonIgnore
     private List<LocalTime> timeLocal;  // starting time in time format
@@ -45,6 +48,14 @@ public class Bus implements Draw, Update {
     private boolean isActive = false;   // is bus active or not
     private double speedSet;            // slower speed
     private int wait = 0;               // default time of waiting at a stop
+    private boolean atStopFlag = false;
+    public List<String> visited = new ArrayList<>();
+    @FXML
+    private List<Shape> stopText;
+    private ArrayList<Shape> sGUI;
+    private ArrayList<Shape> sStop;
+
+
 
     /**
      * Constructor for bus
@@ -162,13 +173,6 @@ public class Bus implements Draw, Update {
     }
 
     /**
-     * Sets the starting position to beginning coordinate of
-     * the first street on which first stop lies
-     */
-    public void setStart() {
-        position = line.getStops().get(0).getStreet().getBegin();
-    }
-    /**
      * Set GUI in the form of a circle of certain color and radius. Color is taken
      * from line to which this bus belongs.
      */
@@ -198,6 +202,33 @@ public class Bus implements Draw, Update {
         }
     }
 
+    public void getStopList(Controller schedule) {
+        double x = 85;
+        double y = 40;
+        stopText = new ArrayList<>();
+        for(Line line : schedule.getMap().getLines()){
+            int timeCode = 0;
+            Text title = new Text(x - 25, y, "LINE SCHEDULE");
+            title.setFont(Font.font("Garamond", FontWeight.SEMI_BOLD, 20));
+            title.setStroke(Color.web(line.getColor()));
+            stopText.add(title);
+            y = y + 22;
+            for(Stop s : line.getStops()){
+                String timeText = timeString.get(timeCode + 1);
+                Text tempText = new Text(x, y, s.getStopName() + "      " + timeText);
+                timeCode = timeCode + 1;
+
+                tempText.setFont(Font.font("Garamond", FontWeight.LIGHT, 15));
+                tempText.setStroke(Color.LIGHTGRAY);
+
+                stopText.add(tempText);
+                y = y + 22;
+            }
+            schedule.drawGUI(stopText);
+            y = y + 50;
+        }
+    }
+
     /**
      * At the right time, function places a bus on the map and
      * when said bus finishes his route, it is removed from the map.
@@ -207,6 +238,8 @@ public class Bus implements Draw, Update {
     @Override
     public void update(LocalTime locTime, Controller busController) {
         // if it's time to start the route (current time is equal to time of the bus)
+            getStopList(busController);
+
         if(locTime.equals(timeLocal.get(0))) {
             if(busController.getActiveBuses().contains(this)){
                 return;
@@ -230,15 +263,58 @@ public class Bus implements Draw, Update {
         }
     }
 
+    private Street busOnStreet(){
+        for(Street s : route.getRouteStreets()){
+            Coordinate sBegin = s.getBegin();
+            Coordinate sEnd = s.getEnd();
+            double busBeginX = position.getX() - sBegin.getX();
+            double busBeginY = position.getY() - sBegin.getY();
+
+            double beginEndX = sEnd.getX() - sBegin.getX();
+            double beginEndY = sEnd.getY() - sBegin.getY();
+
+            double result = busBeginX * beginEndY - busBeginY * beginEndX;
+
+            if(-0.05 < result && result < 0.05) {
+                if(Math.abs(beginEndX) >= Math.abs(beginEndY)) {
+                    if(beginEndX > 0){
+                        if(sBegin.getX() <= position.getX() && position.getX() <= sEnd.getX()) {
+                            return s;
+                        }
+                    }
+                    else{
+                        if(sEnd.getX() <= position.getX() && position.getX() <= sBegin.getX()) {
+                            return s;
+                        }
+                    }
+                }
+                else {
+                    if(beginEndY > 0){
+                        if (sBegin.getY() <= position.getY() && position.getY() <= sEnd.getY()) {
+                            return s;
+                        }
+                    }
+                    else{
+                        if (sEnd.getY() <= position.getY() && position.getY() <= sBegin.getY()) {
+                            return s;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * If there's traffic, bus slows down by a fraction it's original speed.
      * Slowest a bus can move is 0.4.
      */
     @Override
     public void traffic() {
-        double traffic = route.getThisStreet().getTraffic();
+        double traffic = busOnStreet().getTraffic();
         double currentSpeed;
         if(traffic > 0) {
+            System.out.println("vlezl jsem tady ale nemel jsem.");
             currentSpeed = speedSet;
             while(traffic > 0) {
                 currentSpeed = currentSpeed - 0.2;
@@ -248,10 +324,21 @@ public class Bus implements Draw, Update {
                 }
                 traffic = traffic - 1;
             }
-            speed = currentSpeed;
+            if(atStopFlag == false){
+                speed = currentSpeed;
+            }
+            else {
+                speed = 0;
+            }
+
         }
         else {
-            speed = speedSet;
+            if(atStopFlag == false){
+                speed = speedSet;
+            }
+            else {
+                speed = 0;
+            }
         }
     }
 
@@ -261,24 +348,32 @@ public class Bus implements Draw, Update {
      * in and out. Deviation is used to calculate how close to a stop bus really is.
      */
     @Override
-    public void stopAtStop() {
+    public void stopAtStop(LocalTime time) {
         for(Stop t : route.getRouteStops()) {
             double deviationX = 0;
             double deviationY = 0;
             deviationX = Math.abs(Math.abs(t.getCoordinates().getX() - Math.abs(position.getX())));
             deviationY = Math.abs(Math.abs(t.getCoordinates().getY() - Math.abs(position.getY())));
 
-            System.out.println("odchylka x: " + deviationX + " odchylka y:" + deviationY);
-            System.out.println(t.getCoordinates() + "   " + position);
-            if(deviationX  < 2.0 && deviationY < 2.0){
-                System.out.println("Stal jsem!");
+            if(deviationX  < 1.6 && deviationY < 1.6){
                 if(wait == 0) {
-                    wait = 6;
-                    speed = 0;
+                    if(visited.contains(t.getStopName())){
+                        speed = speedSet;
+                        break;
+                    }
+                    else {
+                        atStopFlag = true;
+                        wait = 6;
+                        speed = 0;
+                        visited.add(t.getStopName());
+                    }
+
                 }
                 else {
                     wait = wait - 1;
                     if(wait == 0) {
+                        atStopFlag = false;
+                        System.out.println(time);
                         speed = speedSet;
                     }
                 }
@@ -296,23 +391,58 @@ public class Bus implements Draw, Update {
      * in the color of its line.
      */
     public void initBus(){
-        setStart();
-        setGUI();
         setTimeLocal(timeString);
         route = new Route();
         route.setRoute(line.getStops());
+        position = route.getRoute().get(0);
+        setGUI();
         speedSet = speed;
         GUI.get(0).setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             @FXML
             public void handle(MouseEvent event) {
                 for(Street s : route.getRouteStreets()){
-                    s.getGUI().get(0).setStroke(Color.web(line.getColor()));
-                    s.getGUI().get(0).setStrokeWidth(2);
+                    if(! s.getGUI().get(0).getStroke().equals(Color.DARKSLATEGRAY)){
+                        s.getGUI().get(0).setStroke(Color.web(line.getColor()));
+                        s.getGUI().get(0).setStrokeWidth(1.2);
+                    }
+                    // TO DO GET LINE GUI
                 }
             }
         });
     }
+
+    /* public void scheduleGUI(){
+        sGUI = new ArrayList<>();
+        sStop = new ArrayList<>();
+        double x = 50;
+        double y = -30;
+
+        int t = 0;
+        Text stopTitle = new Text(x, y, )
+        for(Line line : schedule.getMap().getLines()){
+            int timeCode = 0;
+            Text title = new Text(x - 25, y, "LINE SCHEDULE");
+            title.setFont(Font.font("Garamond", FontWeight.SEMI_BOLD, 20));
+            title.setStroke(Color.web(line.getColor()));
+            stopText.add(title);
+            y = y + 22;
+            for(Stop s : line.getStops()){
+                String timeText = timeString.get(timeCode + 1);
+                Text tempText = new Text(x, y, s.getStopName() + "      " + timeText);
+                timeCode = timeCode + 1;
+
+                tempText.setFont(Font.font("Garamond", FontWeight.LIGHT, 15));
+                tempText.setStroke(Color.LIGHTGRAY);
+
+                stopText.add(tempText);
+                y = y + 22;
+            }
+            schedule.drawGUI(stopText);
+            y = y + 50;
+        }
+
+    } */
 
     @Override
     public String toString() {
@@ -320,6 +450,7 @@ public class Bus implements Draw, Update {
                "  Starts at: " + timeString + '\n' +
                "      Speed: " +  speed;
     }
+
 
     @Override
     public boolean equals(Object o) {
